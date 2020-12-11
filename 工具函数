@@ -21,7 +21,7 @@ function clone(x) {
     case 'RegExp':
       return copyRegExp(x);
     case 'Date':
-      return new Date(x.getTime());
+      return new Date(x);
     case 'Function':
       return x;
     case 'Array':
