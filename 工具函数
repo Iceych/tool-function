@@ -1,3 +1,79 @@
+// 事件节流
+function throttle(func, delay) {
+	var timer = null;
+	var startTime = Date.now();
+	return function() {
+		var curTime = Date.now();
+		var remaining = delay - (curTime - startTime);
+		var context = this;
+		var args = arguments;
+		clearTimeout(timer);
+		if (remaining <= 0) {
+			func.apply(context, args);
+			startTime = Date.now();
+		} else {
+			timer = setTimeout(func, remaining);
+		}
+	};
+}
+
+/**
+ * @param {String} url
+ * @description 从URL中解析参数
+ */
+function getParams(param) {
+	let urlSearch = window.location.hash;
+	if (urlSearch) {
+		let reg = new RegExp("[?&]" + param + "=([^&]*)[&]?");
+		let keyArray = urlSearch.match(reg);
+		if (keyArray) {
+			return keyArray[1];
+		}
+	}
+	return;
+}
+
+// 预加载blobUrl
+function getBloburl(src, callback) {
+	const req = new XMLHttpRequest();
+	req.open("GET", src, true);
+	req.responseType = "blob";
+	req.onload = function() {
+		if (this.status === 200) {
+			const videoBlob = this.response;
+			const blobSrc = URL.createObjectURL(videoBlob);
+			callback(blobSrc);
+		}
+	};
+	req.onerror = function() {
+		// Error
+	};
+	req.send();
+}
+
+// 时间格式转换
+function formatDigit(digit) {
+	return digit > 9 ? digit : "0" + digit;
+}
+function formatMilliseconds(totalMSeconds) {
+	let hper = 60 * 60 * 1000;
+	let mper = 60 * 1000;
+	let sper = 1000;
+	let hours = Math.floor(totalMSeconds / hper);
+	let minutes = Math.floor((totalMSeconds % hper) / mper);
+	let seconds = Math.floor((totalMSeconds % mper) / sper);
+	let milliseconds = Math.floor((totalMSeconds % sper) / 10);
+	return (
+		formatDigit(hours) +
+		":" +
+		formatDigit(minutes) +
+		":" +
+		formatDigit(seconds) +
+		":" +
+		formatDigit(milliseconds)
+	);
+}
+
 // 获取数据类型
 function _getDataType(data) {
   return Object.prototype.toString.call(data).slice(8, -1);
